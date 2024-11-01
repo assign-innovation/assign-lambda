@@ -1,35 +1,41 @@
-const AWS = require('aws-sdk');
-const rds = new AWS.RDSDataService();
+// ========================================================
+// Node.js v20 & aws-sdk v3
+// ========================================================
+import { RDSDataClient } from "@aws-sdk/client-rds-data";
 
-exports.handler =  async (event, context, callback) => {
+import { index as errIndex } from "./model/err.js";
+import { index as firstMeetingReminderClickIndex } from "./model/first-meeting-reminder-click.js";
 
-    const path = event.route;
-    let req;
-    if(path == "click-event"){
-        req = require('./model/first-meeting-reminder-click.js');
-    }
-    else if(path == "error") {
-        req = require('./model/err.js');
-    }
-    else {
-        const err_res = {
-            statusCode: 400,
-            body: JSON.stringify({
-                res: "No such route exists"
+const rds = new RDSDataClient({ region: "ap-northeast-1" });
+
+/**
+ * 初回面談リマインドのボタンクリックイベントを ACE に反映するための関数
+ * @param {*} event
+ * @param {*} context
+ * @param {*} callback
+ */
+export const handler = async (event, context, callback) => {
+    try {
+        let res;
+        switch (event.route) {
+            case "click-event":
+                res = await firstMeetingReminderClickIndex(event, rds);
+                break;
+            case "error":
+                res = await errIndex(event, rds);
+                break;
+            default:
+                throw new Error("No such route exists");
+        }
+
+        callback(null, res.statusCode === 200 ? res : JSON.stringify(res));
+    } catch (error) {
+        callback(
+            JSON.stringify({
+                statusCode: 400,
+                body: JSON.stringify({ res: error.message }),
+                headers: { "Content-Type": "application/json" },
             }),
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        };
-        callback(JSON.stringify(err_res));
+        );
     }
-    
-    const res = await req.index(event, rds);
-    if(res.statusCode === 200){
-        callback(null, res);
-    }else{
-        callback(JSON.stringify(res));
-    }
-    
-
 };
