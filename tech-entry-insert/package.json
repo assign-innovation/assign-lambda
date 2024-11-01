@@ -1,0 +1,16 @@
+{
+    "name": "node-v20",
+    "version": "1.0.0",
+    "type": "module",
+    "description": "Lambda Node.js v20 & aws-sdk v3",
+    "main": "index.js",
+    "scripts": {
+        "start": "node index.js"
+    },
+    "dependencies": {
+        "@aws-sdk/client-rds-data": "3.679.0",
+        "@aws-sdk/client-secrets-manager": "3.679.0",
+        "dotenv": "16.4.5",
+        "squel": "5.13.0"
+    }
+}

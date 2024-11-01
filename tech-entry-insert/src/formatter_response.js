@@ -4,27 +4,26 @@ const headers = {
   "Content-Type": "application/json",
 };
 
-
-exports.formatJSONResponseSuccess = (response) => {
+export const formatJSONResponseSuccess = (response) => {
   return {
     statusCode: 200,
     headers: headers,
-    body: JSON.stringify(response)
+    body: JSON.stringify(response),
   };
 };
 
-exports.formatJSONResponseBadRequest = (response) => {
+export const formatJSONResponseBadRequest = (response) => {
   return {
     statusCode: "400",
     headers: headers,
-    body: JSON.stringify(response)
+    body: JSON.stringify(response),
   };
 };
 
-exports.formatJSONResponseServerError = (response) => {
+export const formatJSONResponseServerError = (response) => {
   return {
     statusCode: 500,
     headers: headers,
-    body: JSON.stringify(response)
+    body: JSON.stringify(response),
   };
 };
